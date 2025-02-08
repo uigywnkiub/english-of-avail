@@ -57,13 +57,13 @@ async function getLineNumber() {
     }
     return parseInt(lineNum, 10)
   } catch (err) {
-    if (
-      err.response.data.message === 'Not Found' ||
-      err.response.data.status === '404'
-    ) {
-      error('Not found or status 404. Return 1.')
-      return 1
-    }
+    // if (
+    //   err.response.data.message === 'Not Found' ||
+    //   err.response.data.status === '404'
+    // ) {
+    //   error('Not found or status 404. Return 1.')
+    //   return 1
+    // }
     error(err)
     process.exit(1)
   }
