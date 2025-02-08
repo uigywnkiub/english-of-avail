@@ -1,0 +1,94 @@
+name: Main
+
+on:
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
+  schedule:
+    - cron: '0 16 * * *' # Runs daily at 18:00 by Ukraine time
+
+jobs:
+  script:
+    runs-on: ubuntu-latest
+    if: ${{ vars.IS_DISABLE_WORKFLOW != 'true' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          # cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm i
+
+      - name: Run script with envs
+        run: pnpm start
+        env:
+          ENGLISH_OF_AVAIL_REPO_TOKEN: ${{ secrets.ENGLISH_OF_AVAIL_REPO_TOKEN }}
+          OWNER: ${{ secrets.OWNER }}
+          REPOSITORY: ${{ secrets.REPOSITORY}}
+          LINE_NUMBER_VAR_NAME: ${{ secrets.LINE_NUMBER_VAR_NAME }}
+          DISABLE_WORKFLOW_VAR_NAME: ${{ secrets.DISABLE_WORKFLOW_VAR_NAME }}
+          TG_TOKEN: ${{ secrets.TG_TOKEN }}
+          TG_CHAT_ID: ${{ secrets.TG_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ secrets.GEMINI_MODEL }}
+
+  increment-variable:
+    needs: script
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Current Line Number
+        id: fetch
+        run: |
+          # Fetch the LINE_NUMBER variable
+          RESPONSE=$(curl -s -H "Authorization: Bearer ${{ secrets.ENGLISH_OF_AVAIL_REPO_TOKEN }}" \
+                          -H "Accept: application/vnd.github+json" \
+                          https://api.github.com/repos/${{ github.repository }}/actions/variables/LINE_NUMBER)
+
+          # Check if the response contains "Not Found" or "status": "404"
+          if [[ "$RESPONSE" == *"Not Found"* || "$RESPONSE" == *"status\": 404"* ]]; then
+            echo "LINE_NUMBER variable does not exist, creating it with value 1."
+            CURRENT_LINE_NUMBER=1
+            # Create the variable with initial value 1
+            curl -X POST \
+                 -H "Authorization: Bearer ${{ secrets.ENGLISH_OF_AVAIL_REPO_TOKEN }}" \
+                 -H "Accept: application/vnd.github+json" \
+                 https://api.github.com/repos/${{ github.repository }}/actions/variables \
+                 -d '{"name":"LINE_NUMBER", "value":"1"}'
+          else
+            # If it exists, extract the current value
+            CURRENT_LINE_NUMBER=$(echo "$RESPONSE" | jq -r '.value // "1"')
+          fi
+
+          # Log the current line number
+          echo "Current Line Number: $CURRENT_LINE_NUMBER"
+          echo "CURRENT_LINE_NUMBER=$CURRENT_LINE_NUMBER" >> $GITHUB_ENV
+
+      - name: Increment Line Number
+        run: |
+          # Increment the line number
+          NEW_LINE_NUMBER=$((CURRENT_LINE_NUMBER + 1))
+          echo "NEW_LINE_NUMBER=$NEW_LINE_NUMBER" >> $GITHUB_ENV
+          echo "Incremented Line Number to: $NEW_LINE_NUMBER"
+
+      - name: Update GitHub Variable
+        run: |
+          # Update the LINE_NUMBER variable with the new value
+          curl -X PATCH \
+               -H "Authorization: Bearer ${{ secrets.ENGLISH_OF_AVAIL_REPO_TOKEN }}" \
+               -H "Accept: application/vnd.github+json" \
+               https://api.github.com/repos/${{ github.repository }}/actions/variables/LINE_NUMBER \
+               -d '{"value":"'"$NEW_LINE_NUMBER"'"}'
+
+      - name: Log New Line Number
+        run: echo "Updated LINE_NUMBER to $NEW_LINE_NUMBER"
