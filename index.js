@@ -146,8 +146,6 @@ function formatMessage(emoji, boldText, hiddenText) {
 
 async function main() {
   const lineNum = await getLineNumber()
-  console.log('🚀  lineNum:', lineNum)
-  return
   const filePath = `${process.cwd()}/dictionary/NGSL_1.2/NGSL_1.2_alphabetized_description.txt`
 
   getLineByNumber(filePath, lineNum, async (line) => {
