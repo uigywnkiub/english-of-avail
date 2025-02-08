@@ -145,11 +145,10 @@ function formatMessage(emoji, boldText, hiddenText) {
 }
 
 async function main() {
-  const lineNum = await getLineNumber()
   const filePath = `${process.cwd()}/dictionary/NGSL_1.2/NGSL_1.2_alphabetized_description.txt`
 
   getLineByNumber(filePath, lineNum, async (line) => {
-    log(`Line ${lineNum}:`, line)
+    log(`Read line ${lineNum}:`, line)
 
     const [emojiLine, translatedLine] = await Promise.all([
       getAIText(
@@ -163,13 +162,26 @@ async function main() {
 
     const message = formatMessage(emojiLine, line, translatedLine)
 
-    bot.sendMessage(TG_CHAT_ID, message, {
-      allow_sending_without_reply: true,
-      reply_to_message_id: false,
-      protect_content: true,
-      parse_mode: 'MarkdownV2',
-    })
+    try {
+      await bot.sendMessage(TG_CHAT_ID, message, {
+        allow_sending_without_reply: true,
+        reply_to_message_id: false,
+        protect_content: true,
+        parse_mode: 'MarkdownV2',
+      })
+    } catch (err) {
+      error(err)
+      process.exit(1)
+    }
   })
 }
 
-main()
+async function runMainTwice() {
+  let lineNum = await getLineNumber() // Get initial line number
+
+  await main(lineNum) // Run first time
+  await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait for 1 second
+  await main(lineNum + 1) // Run second time with incremented line number
+}
+
+runMainTwice()
