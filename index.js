@@ -30,7 +30,7 @@ const AIModel = genAI.getGenerativeModel({
     stopSequences: ['\n'],
     // A token is equivalent to about 4 characters for Gemini models. 100 tokens are about 60-80 English words.
     maxOutputTokens: 40,
-    temperature: 0.7,
+    // temperature: 0.5,
   },
   // safetySettings,
 })
