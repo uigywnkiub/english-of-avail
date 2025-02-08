@@ -144,7 +144,7 @@ function formatMessage(emoji, boldText, hiddenText) {
   return `${emoji}\n\n${bold}\n\n${hidden}`
 }
 
-async function main() {
+async function main(lineNum) {
   const filePath = `${process.cwd()}/dictionary/NGSL_1.2/NGSL_1.2_alphabetized_description.txt`
 
   getLineByNumber(filePath, lineNum, async (line) => {
