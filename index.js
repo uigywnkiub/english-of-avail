@@ -180,7 +180,7 @@ async function runMainTwice() {
   let lineNum = await getLineNumber() // Get initial line number
 
   await main(lineNum) // Run first time
-  await new Promise((resolve) => setTimeout(resolve, 1000)) // Wait for 1 second
+  await new Promise((resolve) => setTimeout(resolve, 5000))
   await main(lineNum + 1) // Run second time with incremented line number
 }
 
