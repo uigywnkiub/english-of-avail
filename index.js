@@ -148,17 +148,15 @@ async function main(lineNum) {
   const filePath = `${process.cwd()}/dictionary/NGSL_1.2/NGSL_1.2_alphabetized_description.txt`
 
   getLineByNumber(filePath, lineNum, async (line) => {
-    log(`Read line ${lineNum}:`, line)
+    log(`\x1b[32mRead line ${lineNum}:\x1b[0m`, line)
 
-    const [emojiLine, translatedLine] = await Promise.all([
-      getAIText(
-        `Please provide only one emoji representing the word (no extra text): [${line}]
-        If there isn't a single, clear emoji representation, choose the closest or most relevant one. If there is no appropriate emoji, return [🤔].`
-      ),
-      getAIText(
-        `Translate the following English word to Ukrainian. Please provide only the translated word or words (no extra text): [${line}]`
-      ),
-    ])
+    const emojiLine = await getAIText(
+      `Please provide only one emoji representing the word (no extra text): [${line}]
+      If there isn't a single, clear emoji representation, choose the closest or most relevant one. If there is no appropriate emoji, return [🤔].`
+    )
+    const translatedLine = await getAIText(
+      `Translate the following English word to Ukrainian. Please provide only the translated word or words (no extra text): [${line}]`
+    )
 
     const message = formatMessage(emojiLine, line, translatedLine)
 
