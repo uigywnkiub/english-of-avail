@@ -181,8 +181,8 @@ async function runMainTwice() {
   let lineNum = await getLineNumber() // Get initial line number
 
   await main(lineNum) // Run first time
-  await delay()
-  await main(lineNum + 1) // Run second time with incremented line number
+  // await delay()
+  // await main(lineNum + 1) // Run second time with incremented line number
 }
 
 runMainTwice()

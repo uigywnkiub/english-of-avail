@@ -80,7 +80,7 @@ jobs:
       - name: Increment Line Number
         run: |
           # Increment the line number
-          NEW_LINE_NUMBER=$((CURRENT_LINE_NUMBER + 2))
+          NEW_LINE_NUMBER=$((CURRENT_LINE_NUMBER + 1))
           echo "NEW_LINE_NUMBER=$NEW_LINE_NUMBER" >> $GITHUB_ENV
           echo "Incremented Line Number to: $NEW_LINE_NUMBER"
 
