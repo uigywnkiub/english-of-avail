@@ -124,7 +124,10 @@ function getLineByNumber(filePath, lineNum, callback) {
   }
 }
 
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
+
 async function getAIText(prompt) {
+  await delay(5000)
   try {
     const content = await AIModel.generateContent(prompt)
     return content.response.text().trim()
@@ -154,7 +157,7 @@ async function main(lineNum) {
       `Please provide only one emoji representing the word (no extra text): [${line}]
       If there isn't a single, clear emoji representation, choose the closest or most relevant one. If there is no appropriate emoji, return [🤔].`
     )
-    await new Promise((resolve) => setTimeout(resolve, 5000))
+    await delay(5000); 
     const translatedLine = await getAIText(
       `Translate the following English word to Ukrainian. Please provide only the translated word or words (no extra text): [${line}]`
     )
@@ -179,7 +182,7 @@ async function runMainTwice() {
   let lineNum = await getLineNumber() // Get initial line number
 
   await main(lineNum) // Run first time
-  await new Promise((resolve) => setTimeout(resolve, 5000))
+  await delay(5000)
   await main(lineNum + 1) // Run second time with incremented line number
 }
 
