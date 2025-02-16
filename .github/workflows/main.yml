@@ -30,6 +30,9 @@ jobs:
       - name: Install dependencies
         run: pnpm i
 
+      - name: Show Server Location
+        run: curl -s https://ipinfo.io
+
       - name: Run script with envs
         run: pnpm start
         env:
