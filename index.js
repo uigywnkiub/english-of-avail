@@ -182,7 +182,7 @@ async function runMainTwice() {
 
   await main(lineNum) // Run first time
   await delay()
-  // await main(lineNum + 1) // Run second time with incremented line number
+  await main(lineNum + 1) // Run second time with incremented line number
 }
 
 runMainTwice()
