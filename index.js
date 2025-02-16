@@ -154,6 +154,7 @@ async function main(lineNum) {
       `Please provide only one emoji representing the word (no extra text): [${line}]
       If there isn't a single, clear emoji representation, choose the closest or most relevant one. If there is no appropriate emoji, return [🤔].`
     )
+    await new Promise((resolve) => setTimeout(resolve, 5000))
     const translatedLine = await getAIText(
       `Translate the following English word to Ukrainian. Please provide only the translated word or words (no extra text): [${line}]`
     )
