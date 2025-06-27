@@ -141,9 +141,13 @@ function capitalizeFirstLetter(text) {
   return `${text?.[0].toUpperCase()}${text?.substring(1)}` ?? ''
 }
 
+function escapeMarkdown(text) {
+  return text.replace(/([_*\[\]()~`>#+=|{}.!-])/g, '\\$1')
+}
+
 function formatMessage(emoji, boldText, hiddenText) {
-  const bold = `*${capitalizeFirstLetter(boldText)}*`
-  const hidden = `||${capitalizeFirstLetter(hiddenText)}||`
+  const bold = `*${escapeMarkdown(capitalizeFirstLetter(boldText))}*`
+  const hidden = `||${escapeMarkdown(capitalizeFirstLetter(hiddenText))}||`
   return `${emoji}\n\n${bold}\n\n${hidden}`
 }
 
