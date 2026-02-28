@@ -46,12 +46,12 @@ async function getLineNumber() {
         headers: {
           'X-GitHub-Api-Version': '2022-11-28',
         },
-      }
+      },
     )
     const lineNum = res.data.value
     if (lineNum < 1) {
       error(
-        'Github variable `line number` must be 1 or more, upper and snake case.'
+        'Github variable `line number` must be 1 or more, upper and snake case.',
       )
       process.exit(1)
     }
@@ -81,7 +81,7 @@ async function createDisableWorkflowVariable() {
         headers: {
           'X-GitHub-Api-Version': '2022-11-28',
         },
-      }
+      },
     )
   } catch (err) {
     error(err)
@@ -110,7 +110,7 @@ function getLineByNumber(filePath, lineNum, callback) {
     rl.on('close', async () => {
       if (currLine < lineNum) {
         error(
-          `Dictionary file contains ${currLine} lines, but received ${lineNum}.`
+          `Dictionary file contains ${currLine} lines, but received ${lineNum}.`,
         )
 
         await createDisableWorkflowVariable()
@@ -142,7 +142,7 @@ function capitalizeFirstLetter(text) {
 }
 
 function escapeMarkdown(text) {
-  return text.replace(/([_*\[\]()~`>#+=|{}.!-])/g, '\\$1')
+  return text.replace(/([_*\[\]()~`>#+=|{}.!\-\\])/g, '\\$1')
 }
 
 function formatMessage(emoji, boldText, hiddenText) {
@@ -159,10 +159,10 @@ async function main(lineNum) {
 
     const emojiLine = await getAIText(
       `Please provide only one emoji representing the word (no extra text): [${line}]
-      If there isn't a single, clear emoji representation, choose the closest or most relevant one. If there is no appropriate emoji, return [🤔].`
+      If there isn't a single, clear emoji representation, choose the closest or most relevant one. If there is no appropriate emoji, return [🤔].`,
     )
     const translatedLine = await getAIText(
-      `Translate the following English word to Ukrainian. Please provide only the translated word or words (no extra text): [${line}]`
+      `Translate the following English word to Ukrainian. Please provide only the translated word or words (no extra text): [${line}]`,
     )
 
     const message = formatMessage(emojiLine, line, translatedLine)
